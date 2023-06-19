@@ -18,7 +18,7 @@ else {
 }
 
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
-mainClassName = 'com.ktx.planes.lwjgl3.Lwjgl3Launcher'
+mainClassName = 'com.ktx.planes.lwjgl3.Lwjgl3LauncherKt'
 eclipse.project.name = appName + '-lwjgl3'
 sourceCompatibility = 1.8
 

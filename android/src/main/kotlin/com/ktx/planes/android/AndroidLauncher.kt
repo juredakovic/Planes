@@ -3,7 +3,7 @@ package com.ktx.planes.android
 import android.os.Bundle
 import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
-import com.ktx.planes.Planes
+import planes.Planes
 
 /** Launches the Android application.  */
 class AndroidLauncher : AndroidApplication() {
