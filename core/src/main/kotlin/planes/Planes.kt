@@ -13,9 +13,6 @@ import ktx.async.KtxAsync
 import planes.screen.GameScreen
 import planes.screen.MenuScreen
 
-
-
-//private val gdxArrayOf<GameObject>
 /** [com.badlogic.gdx.ApplicationListener] implementation shared by all platforms.  */
 class Planes() : KtxGame<KtxScreen>() {
 
