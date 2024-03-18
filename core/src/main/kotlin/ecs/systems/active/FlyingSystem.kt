@@ -10,7 +10,6 @@ import kotlin.random.Random
 
 class FlyingSystem : IteratingSystem(allOf(BirdComponent::class, MovementComponent::class).get()) {
 
-
     override fun processEntity(entity: Entity?, deltaTime: Float) {
         val movement : MovementComponent = MovementComponent.MOVEMENTMAPPER[entity]
         val bird : BirdComponent = BirdComponent.BIRDMAPPER[entity]

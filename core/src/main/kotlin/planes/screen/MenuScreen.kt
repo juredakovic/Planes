@@ -7,8 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.actors.onClick
 import planes.Planes
 
@@ -16,10 +17,10 @@ class MenuScreen(game : Planes, atlas: TextureAtlas) : AbstractPlanesScreen(game
 
 private lateinit var stage : Stage
 private val mySkin : Skin = Skin(Gdx.files.internal("skin/glassy-ui.json"))
-
+private var viewport : Viewport = ExtendViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
 override fun show() {
 
-    stage = Stage()
+    stage = Stage(viewport)
     Scene2DSkin.defaultSkin = mySkin
     stage.actors {
 
@@ -38,9 +39,13 @@ override fun show() {
                     button(style = "small") {
                         label("Options") {
                         }
+                        onClick{ game.setScreen<OptionsScreen>()}
                     }
                     button(style = "small") {
                         label("Exit")
+                        onClick {
+                            Gdx.app.exit()
+                        }
                     }
                 }
             }
@@ -48,6 +53,10 @@ override fun show() {
 
     Gdx.input.inputProcessor = stage
 }
+
+    override fun resize(width: Int, height: Int) {
+        viewport.update(width, height, true)
+    }
 override fun render(delta : Float) {
     stage.act()
     stage.draw()

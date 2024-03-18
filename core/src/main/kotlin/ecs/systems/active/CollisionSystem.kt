@@ -10,41 +10,80 @@ import ktx.ashley.allOf
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.utils.ImmutableArray
 import com.badlogic.gdx.math.Intersector
+import common.GameManager
+import ecs.components.ParcelComponent
+import ecs.components.PlaneComponent
 import ecs.components.PlanePlayerComponent
 
-class CollisionSystem : IteratingSystem(allOf(BirdComponent::class, BoundsComponent::class, PositionComponent::class, DimensionComponent::class).get()) {
+class CollisionSystem : IteratingSystem(allOf(BoundsComponent::class, PositionComponent::class, DimensionComponent::class).get()) {
 
     companion object {
         var PLANE_FAMILY : Family = allOf(PlanePlayerComponent::class, BoundsComponent::class).get()
         var BIRDS_FAMILY : Family = allOf(BirdComponent::class, BoundsComponent::class).get()
+        var PARCELS_FAMILY : Family = allOf(ParcelComponent::class, BoundsComponent::class).get()
+        var OTHER_PLANES_FAMILY : Family = allOf(PlaneComponent::class, BoundsComponent::class).get()
     }
+
     override fun processEntity(entity: Entity?, deltaTime: Float) {
+        if (GameManager.isGameOver()) {
+            return
+        }
+        val planeArr: ImmutableArray<Entity> = engine.getEntitiesFor(PLANE_FAMILY)
+        val birdsArr: ImmutableArray<Entity> = engine.getEntitiesFor(BIRDS_FAMILY)
+        val parcelArr: ImmutableArray<Entity> = engine.getEntitiesFor(PARCELS_FAMILY)
+        val otherPlanesArr : ImmutableArray<Entity> = engine.getEntitiesFor(OTHER_PLANES_FAMILY)
+        for (planeEntity: Entity in planeArr) {
+            val planeBounds: BoundsComponent = BoundsComponent.BOUNDSMAPPER.get(planeEntity)
 
-        val planeArr : ImmutableArray<Entity> = engine.getEntitiesFor(PLANE_FAMILY)
-        val birdsArr : ImmutableArray<Entity> = engine.getEntitiesFor(BIRDS_FAMILY)
+            for (birdEntity: Entity in birdsArr) {
+                val bird: BirdComponent = BirdComponent.BIRDMAPPER.get(birdEntity)
 
-        for(planeEntity : Entity in planeArr) {
-            val planeBounds : BoundsComponent = BoundsComponent.BOUNDSMAPPER.get(planeEntity)
+                when{(bird.isBirdHit) -> continue}
 
-            loop@ for(birdEntity : Entity in birdsArr){
-                val bird : BirdComponent = BirdComponent.BIRDMAPPER.get(birdEntity)
-                when {bird.isBirdHit ->  continue@loop }
+                val birdBounds: BoundsComponent = BoundsComponent.BOUNDSMAPPER.get(birdEntity)
 
-                val birdBounds : BoundsComponent = BoundsComponent.BOUNDSMAPPER.get(birdEntity)
                 when {
                     (Intersector.overlaps(
                         planeBounds.boundsRectangle,
                         birdBounds.boundsRectangle
                     )) -> {
                         bird.isBirdHit = true
+                        GameManager.damage()
                         engine.removeEntity(birdEntity)
                     }
                 }
             }
+            for(parcelEntity: Entity in parcelArr) {
+                val parcel : ParcelComponent = ParcelComponent.PARCELMAPPER.get(parcelEntity)
+                when{(parcel.isParcelCollected) -> continue}
+
+                val parcelBounds : BoundsComponent = BoundsComponent.BOUNDSMAPPER.get(parcelEntity)
+
+                when {
+                    (Intersector.overlaps(
+                        planeBounds.boundsRectangle,
+                        parcelBounds.boundsRectangle
+                    )) -> {
+                        parcel.isParcelCollected = true
+                        GameManager.pickPackage()
+                        engine.removeEntity(parcelEntity)
+                    }
+                }
+            }
+
+            for(otherPlaneEntity : Entity in otherPlanesArr) {
+                val otherPlane : PlaneComponent = PlaneComponent.PLANEMAPPER.get(otherPlaneEntity)
+                when{(otherPlane.isCollided) -> continue}
+
+                val otherPlanesBounds : BoundsComponent = BoundsComponent.BOUNDSMAPPER.get(otherPlaneEntity)
+
+                when{(Intersector.overlaps(planeBounds.boundsRectangle, otherPlanesBounds.boundsRectangle)) ->{
+                    otherPlane.isCollided = true
+                    GameManager.damageBig()
+                    engine.removeEntity(otherPlaneEntity)
+                    engine.removeEntity(planeEntity)
+                }}
+            }
+        }
         }
     }
-
-
-
-
-}
