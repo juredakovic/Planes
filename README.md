@@ -7,6 +7,7 @@ Planes is a 2D platformer game built completely with Kotlin programming language
 -  Player controls the plane
 -  Collects packages to deliver
 -  Avoid oncoming planes and birds
+-  Avoid high rise buildings
 -  3 stage difficulty
 
 ## TECH
