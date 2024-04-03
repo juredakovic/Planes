@@ -1,7 +1,6 @@
 package ecs.systems.passive
 
 import assetstorage.RegionNames.Companion.BIRD
-import assetstorage.RegionNames.Companion.GAME_BACKGROUND
 import assetstorage.RegionNames.Companion.PLANE
 import assetstorage.RegionNames.Companion.DELIVERY_BOX
 import com.badlogic.ashley.core.EntitySystem
@@ -11,7 +10,6 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import common.GameManager
 import config.GameConfig
-import ecs.components.BackgroundComponent
 import ecs.components.BirdComponent
 import ecs.components.BoundsComponent
 import ecs.components.DimensionComponent
@@ -20,6 +18,7 @@ import ecs.components.ParcelComponent
 import ecs.components.PlaneComponent
 import ecs.components.PlanePlayerComponent
 import ecs.components.PositionComponent
+import ecs.components.SkyscraperComponent
 import ecs.components.TextureComponent
 import ecs.components.WorldWrapComponent
 import ecs.components.ZOrderComponent
@@ -33,7 +32,7 @@ class EntityFactorySystem(var atlas: TextureAtlas) : EntitySystem() {
         super.setProcessing(false)
     }
 
-    fun createPlayer()  {
+    fun createPlayer() {
 
         engine.entity {
             with<PlanePlayerComponent> {
@@ -42,7 +41,7 @@ class EntityFactorySystem(var atlas: TextureAtlas) : EntitySystem() {
 
             val position = with<PositionComponent>() {
                 x = 15f
-                y = Gdx.graphics.height / 2f  - atlas.findRegion(PLANE).regionWidth / 2f
+                y = Gdx.graphics.height / 2f - atlas.findRegion(PLANE).regionWidth / 2f
             }
             with<TextureComponent> {
                 texture = TextureRegionDrawable(atlas.findRegion(PLANE))
@@ -52,25 +51,26 @@ class EntityFactorySystem(var atlas: TextureAtlas) : EntitySystem() {
                 width = GameConfig.PLANE_WIDTH * 1f
                 height = GameConfig.PLANE_HEIGHT * 1f
             }
-            with<MovementComponent>{
-                movement.y -= 0.981f * 1/2
+            with<MovementComponent> {
+                movement.y = 0f
+                movement.y -= 0.981f * 1 / 2 * Gdx.graphics.deltaTime
             }
-            with<BoundsComponent>{
+            with<BoundsComponent> {
                 boundsRectangle.setPosition(position.x, position.y)
                 boundsRectangle.setSize(dimension.width, dimension.height)
             }
-            with<WorldWrapComponent>{
+            with<WorldWrapComponent> {
 
             }
-            with <ZOrderComponent> {
+            with<ZOrderComponent> {
                 zAxis = 1
             }
         }
     }
 
-    fun createBird()  {
+    fun createBird() {
         engine.entity {
-            with<BirdComponent> {  }
+            with<BirdComponent> { }
 
             val position = with<PositionComponent> {
 
@@ -82,16 +82,59 @@ class EntityFactorySystem(var atlas: TextureAtlas) : EntitySystem() {
                 texture = TextureRegionDrawable(atlas.findRegion(BIRD))
             }
 
-            val dimension = with<DimensionComponent>{
+            val dimension = with<DimensionComponent> {
 
                 width = GameConfig.BIRD_WIDTH * 1f
                 height = GameConfig.BIRD_HEIGHT * 1f
             }
             with<MovementComponent> {
-
+                movement.x = 0f
                 movement.x -= GameManager.getBirdSpeed() * Gdx.graphics.deltaTime
 
             }
+            with<BoundsComponent> {
+                boundsRectangle.setPosition(position.x, position.y)
+                boundsRectangle.setSize(dimension.width, dimension.height)
+            }
+            with<ZOrderComponent> {
+                zAxis = 1
+            }
+        }
+    }
+
+    fun createSkyscraper() {
+
+        val randomSkyscraper: Int = Random.nextInt(1, 6)
+
+        val selectedSkyscraperRegionName: String = "skyscraper" + randomSkyscraper
+
+        engine.entity {
+            with<SkyscraperComponent> {
+
+            }
+            val position = with<PositionComponent> {
+
+                x = GameConfig.WORLD_WIDTH * MathUtils.random(1f, 3f)
+                y = 0f
+
+            }
+
+            with<TextureComponent> {
+                texture = TextureRegionDrawable(atlas.findRegion(selectedSkyscraperRegionName))
+            }
+
+            val dimension = with<DimensionComponent> {
+
+                width = GameConfig.SKYSCRAPER_WIDTH * 1f
+                height = GameConfig.SKYSCRAPER_HEIGHT * MathUtils.random(0.5f, 2.5f)
+            }
+
+            with<MovementComponent> {
+                movement.x = 0f
+                movement.x -= 500f * GameManager.getBackgroundScrollSpeed().x * Gdx.graphics.deltaTime
+                movement.y = 0f
+            }
+
             with<BoundsComponent> {
                 boundsRectangle.setPosition(position.x, position.y)
                 boundsRectangle.setSize(dimension.width, dimension.height)
@@ -107,58 +150,65 @@ class EntityFactorySystem(var atlas: TextureAtlas) : EntitySystem() {
             with<ParcelComponent> {}
 
             val position = with<PositionComponent> {
-                 x = MathUtils.random(
+                x = MathUtils.random(
                     0f,
                     Gdx.graphics.width.toFloat() - GameConfig.DELIVERY_BOX_HEIGHT
                 )
-                 y = GameConfig.WORLD_HEIGHT
+                y = GameConfig.WORLD_HEIGHT
             }
             with<TextureComponent> {
                 texture = TextureRegionDrawable(atlas.findRegion(DELIVERY_BOX))
             }
 
-            val dimension = with<DimensionComponent>{
+            val dimension = with<DimensionComponent> {
                 width = GameConfig.DELIVERY_BOX_WIDTH * 1f
                 height = GameConfig.DELIVERY_BOX_HEIGHT * 1f
             }
-            with<MovementComponent>{
+            with<MovementComponent> {
+                movement.x = 0f
+                movement.y = 0f
                 movement.y -= (GameManager.getPackageSpeed() * Gdx.graphics.deltaTime)
             }
-            with<BoundsComponent>{
+            with<BoundsComponent> {
                 boundsRectangle.setPosition(position.x, position.y)
                 boundsRectangle.setSize(dimension.width, dimension.height)
             }
-            with<ZOrderComponent>{
+            with<ZOrderComponent> {
                 zAxis = 1
             }
         }
     }
+
     fun createPlane() {
 
-        val randomOpponent : Int = Random.nextInt(1, 6)
+        val randomOpponent: Int = Random.nextInt(1, 6)
 
-        val selectedOpponentRegionName : String = "plane" + randomOpponent
+        val selectedOpponentRegionName: String = "plane" + randomOpponent
         engine.entity() {
-            with<PlaneComponent>{
+            with<PlaneComponent> {
 
             }
 
-            val position = with<PositionComponent>{
+            val position = with<PositionComponent> {
                 x = GameConfig.WORLD_WIDTH
                 y = MathUtils.random(0f, GameConfig.WORLD_HEIGHT - GameConfig.PLANE_OPPONENT_HEIGHT)
             }
             with<TextureComponent> {
                 texture = TextureRegionDrawable(atlas.findRegion(selectedOpponentRegionName))
             }
-
-            val dimension = with<DimensionComponent>{
+            val dimension = with<DimensionComponent> {
                 width = GameConfig.PLANE_OPPONENT_WIDTH * 1f
                 height = GameConfig.PLANE_OPPONENT_HEIGHT * 1f
             }
             with<MovementComponent> {
-                movement.x -= (GameManager.getOpponentPlaneSpeed() * Gdx.graphics.deltaTime)
+                movement.x = 0f
+                movement.x -= (GameManager.getOpponentPlaneSpeed() * MathUtils.random(
+                    0.5f,
+                    3f
+                ) * Gdx.graphics.deltaTime)
+                movement.y = 0f
             }
-            with<BoundsComponent>{
+            with<BoundsComponent> {
                 boundsRectangle.setPosition(position.x, position.y)
                 boundsRectangle.setSize(dimension.width, dimension.height)
             }
@@ -168,7 +218,7 @@ class EntityFactorySystem(var atlas: TextureAtlas) : EntitySystem() {
             }
         }
     }
-
+    /*
     fun createBackground(){
        engine.entity {
            with<BackgroundComponent> {
@@ -191,4 +241,6 @@ class EntityFactorySystem(var atlas: TextureAtlas) : EntitySystem() {
        }
     }
 
+}
+*/
 }

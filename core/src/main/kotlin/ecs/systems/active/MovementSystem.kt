@@ -12,7 +12,7 @@ class MovementSystem : IteratingSystem(allOf(PositionComponent::class, MovementC
 
         val position : PositionComponent = PositionComponent.POSITIONMAPPER[entity]
         val movement : MovementComponent = MovementComponent.MOVEMENTMAPPER[entity]
-        position.x +=  movement.movement.x 
+        position.x +=  movement.movement.x
         position.y += movement.movement.y
 
     }

@@ -8,8 +8,6 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import common.GameManager
 import ktx.graphics.use
 
-
-
 class HudRenderSystem(batch : SpriteBatch, hudViewPort: Viewport, font : BitmapFont) : EntitySystem() {
 
     private val padding : Float = 20.0f
@@ -45,12 +43,15 @@ class HudRenderSystem(batch : SpriteBatch, hudViewPort: Viewport, font : BitmapF
 
 
         when{(GameManager.isGameOver()) -> {
+
             layout.setText(font, "GAME OVER")
             val endX : Float = (hudViewPort.worldWidth + layout.width) / 2 - layout.width
             val endY : Float = (hudViewPort.worldHeight + layout.height) / 2 -layout.height
             batch.use(hudViewPort.camera.combined) {
                 font.draw(batch, layout, endX, endY)
             }
+
+
         }}
         super.update(deltaTime)
     }

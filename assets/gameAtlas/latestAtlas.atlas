@@ -1,83 +1,118 @@
 
 latestAtlas.png
-size: 2048, 1024
+size: 256, 1024
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 aeroplane
   rotate: false
-  xy: 2, 2
+  xy: 96, 686
   size: 64, 32
   orig: 64, 32
   offset: 0, 0
   index: -1
-background
-  rotate: false
-  xy: 2, 102
-  size: 1192, 892
-  orig: 1192, 892
-  offset: 0, 0
-  index: -1
 backtile
   rotate: false
-  xy: 1326, 865
+  xy: 2, 2
   size: 63, 63
   orig: 63, 63
   offset: 0, 0
   index: -1
 bird
   rotate: false
-  xy: 1456, 962
+  xy: 162, 686
   size: 45, 32
   orig: 45, 32
   offset: 0, 0
   index: -1
 deliverybox
   rotate: false
-  xy: 1196, 798
-  size: 64, 64
-  orig: 64, 64
+  xy: 67, 13
+  size: 44, 52
+  orig: 44, 52
   offset: 0, 0
   index: -1
 plane1
   rotate: false
-  xy: 1196, 864
-  size: 128, 64
-  orig: 128, 64
+  xy: 76, 296
+  size: 125, 38
+  orig: 125, 38
   offset: 0, 0
   index: -1
 plane2
   rotate: false
-  xy: 1196, 930
-  size: 128, 64
-  orig: 128, 64
+  xy: 2, 184
+  size: 128, 37
+  orig: 128, 37
   offset: 0, 0
   index: -1
 plane3
   rotate: false
-  xy: 262, 36
-  size: 128, 64
-  orig: 128, 64
+  xy: 2, 223
+  size: 128, 38
+  orig: 128, 38
   offset: 0, 0
   index: -1
 plane4
   rotate: false
-  xy: 132, 36
-  size: 128, 64
-  orig: 128, 64
+  xy: 2, 106
+  size: 125, 37
+  orig: 125, 37
   offset: 0, 0
   index: -1
 plane5
   rotate: false
-  xy: 2, 36
-  size: 128, 64
-  orig: 128, 64
+  xy: 2, 67
+  size: 124, 37
+  orig: 124, 37
   offset: 0, 0
   index: -1
 plane6
   rotate: false
-  xy: 1326, 930
-  size: 128, 64
-  orig: 128, 64
+  xy: 2, 145
+  size: 128, 37
+  orig: 128, 37
+  offset: 0, 0
+  index: -1
+skyscraper1
+  rotate: false
+  xy: 76, 336
+  size: 90, 291
+  orig: 90, 291
+  offset: 0, 0
+  index: -1
+skyscraper2
+  rotate: false
+  xy: 2, 629
+  size: 92, 378
+  orig: 92, 378
+  offset: 0, 0
+  index: -1
+skyscraper3
+  rotate: false
+  xy: 2, 263
+  size: 72, 364
+  orig: 72, 364
+  offset: 0, 0
+  index: -1
+skyscraper4
+  rotate: false
+  xy: 132, 13
+  size: 92, 281
+  orig: 92, 281
+  offset: 0, 0
+  index: -1
+skyscraper5
+  rotate: false
+  xy: 96, 720
+  size: 89, 287
+  orig: 89, 287
+  offset: 0, 0
+  index: -1
+skyscraper6
+  rotate: false
+  xy: 168, 359
+  size: 55, 325
+  orig: 55, 325
   offset: 0, 0
   index: -1

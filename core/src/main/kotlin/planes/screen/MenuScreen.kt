@@ -1,16 +1,26 @@
 package planes.screen
 
+import assetstorage.AssetPaths
 import assetstorage.RegionNames.Companion.BACKGROUND
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import ktx.scene2d.*
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import common.GameManager
 import ktx.actors.onClick
+import ktx.actors.onEnter
+import ktx.actors.onExit
+import ktx.assets.async.AssetStorage
+import ktx.freetype.generateFont
+import ktx.style.label
 import planes.Planes
 
 class MenuScreen(game : Planes, atlas: TextureAtlas) : AbstractPlanesScreen(game, atlas) {
@@ -18,10 +28,27 @@ class MenuScreen(game : Planes, atlas: TextureAtlas) : AbstractPlanesScreen(game
 private lateinit var stage : Stage
 private val mySkin : Skin = Skin(Gdx.files.internal("skin/glassy-ui.json"))
 private var viewport : Viewport = ExtendViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-override fun show() {
+    private val  assetStorage : AssetStorage = game.getAssetStorage()
+    private var generator : FreeTypeFontGenerator = assetStorage.get<FreeTypeFontGenerator>(
+        AssetPaths.FONT)
+
+
+    private val fontA : BitmapFont = generator.generateFont {
+        size = 20
+        color = Color.WHITE
+    }
+
+
+    override fun show() {
 
     stage = Stage(viewport)
     Scene2DSkin.defaultSkin = mySkin
+
+    mySkin.label {
+        font = fontA
+
+    }
+
     stage.actors {
 
         table {
@@ -34,17 +61,30 @@ override fun show() {
                     button(style = "small") {
                         label("New Game") {
                         }
-                        onClick { game.setScreen<GameScreen>() }
+                        onEnter { color=Color.YELLOW }
+                        onExit{ color=Color.WHITE}
+                        onClick {
+                            GameManager.setDifficulty("easy")
+                            game.setScreen<GameScreen>()
+
+                        }
                     }
                     button(style = "small") {
                         label("Options") {
                         }
-                        onClick{ game.setScreen<OptionsScreen>()}
+                        onEnter { color=Color.YELLOW }
+                        onExit{ color=Color.WHITE}
+                        onClick{
+                            game.setScreen<OptionsScreen>()
+                        }
                     }
                     button(style = "small") {
                         label("Exit")
+                        onEnter { color=Color.YELLOW }
+                        onExit{ color=Color.WHITE}
                         onClick {
                             Gdx.app.exit()
+
                         }
                     }
                 }
@@ -57,9 +97,17 @@ override fun show() {
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
     }
+
+    override fun hide() {
+        super.hide()
+        stage.clear()
+    }
 override fun render(delta : Float) {
-    stage.act()
-    stage.draw()
+    stage.run {
+        viewport.apply()
+        act()
+        draw()
+    }
 }
 
     override fun dispose() {

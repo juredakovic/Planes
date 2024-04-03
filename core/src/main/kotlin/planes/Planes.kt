@@ -5,7 +5,6 @@ import assetstorage.AssetDescriptors.Companion.BACKGROUND_MUSIC
 
 import assetstorage.AssetDescriptors.Companion.GAME_ATLAS
 import assetstorage.AssetPaths
-
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -21,11 +20,16 @@ import planes.screen.GameScreen
 import planes.screen.MenuScreen
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import planes.screen.GameOverScreen
+
 import planes.screen.OptionsScreen
+import planes.screen.ScoreScreen
+import planes.screen.UserScreen
 
 class Planes() : KtxGame<KtxScreen>() {
 
     private val planesRef = this
+
     private lateinit var assetStorage : AssetStorage
     override fun create() {
 
@@ -38,6 +42,7 @@ class Planes() : KtxGame<KtxScreen>() {
 
             assetStorage.apply {
 
+                //val preferences : Preferences by lazy { Gdx.app.getPreferences("Planes") }
                 val atlas : TextureAtlas = assetStorage.load(GAME_ATLAS)
                 val backgroundMusic : Sound = assetStorage.load(BACKGROUND_MUSIC)
                 var generator : FreeTypeFontGenerator = assetStorage.load<FreeTypeFontGenerator>(AssetPaths.FONT)
@@ -45,16 +50,24 @@ class Planes() : KtxGame<KtxScreen>() {
                     size = 50
                     color = Color.FIREBRICK
                 }
+
                 addScreen(MenuScreen(planesRef, atlas))
                 addScreen(GameScreen(planesRef, atlas))
                 addScreen(OptionsScreen(planesRef, atlas))
-                setScreen<MenuScreen>()
+                addScreen(ScoreScreen(planesRef, atlas))
+                addScreen(GameOverScreen(planesRef, atlas))
+                addScreen(UserScreen(planesRef, atlas))
+                /*setScreen<ScoreScreen>()*/
+                setScreen<UserScreen>()
+                //setScreen<MenuScreen>()
             }
         }
     }
+
     override fun dispose() {
         super.dispose()
         assetStorage.dispose()
+
     }
     fun getAssetStorage() : AssetStorage {
         return assetStorage

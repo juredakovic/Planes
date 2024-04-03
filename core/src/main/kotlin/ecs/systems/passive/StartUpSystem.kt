@@ -15,10 +15,10 @@ class StartUpSystem : EntitySystem() {
     }
 
     private fun onInit() {
-        factory.createBackground()
         factory.createPlane()
         factory.createPlayer()
         factory.createParcel()
+        factory.createSkyscraper()
         factory.createBird()
     }
 }

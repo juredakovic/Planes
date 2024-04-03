@@ -24,19 +24,17 @@ import ktx.scene2d.actors
 import ktx.scene2d.button
 import ktx.scene2d.label
 import ktx.scene2d.table
+import ktx.style.*
 import ktx.scene2d.verticalGroup
-import ktx.style.label
 import planes.Planes
 
-class OptionsScreen(game : Planes, atlas : TextureAtlas) : AbstractPlanesScreen(game, atlas) {
+class ScoreScreen(game: Planes, atlas : TextureAtlas) : AbstractPlanesScreen(game, atlas) {
 
     private lateinit var stage : Stage
     private val mySkin : Skin = Skin(Gdx.files.internal("skin/glassy-ui.json"))
     private var viewport : Viewport = ExtendViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
     private val  assetStorage : AssetStorage = game.getAssetStorage()
-    private var generator : FreeTypeFontGenerator = assetStorage.get<FreeTypeFontGenerator>(
-        AssetPaths.FONT)
-
+    private var generator : FreeTypeFontGenerator = assetStorage.get<FreeTypeFontGenerator>(AssetPaths.FONT)
 
     private val fontA : BitmapFont = generator.generateFont {
         size = 20
@@ -49,70 +47,55 @@ class OptionsScreen(game : Planes, atlas : TextureAtlas) : AbstractPlanesScreen(
 
         mySkin.label {
             font = fontA
+            fontColor = Color.BLUE
         }
 
         stage.actors {
+
             table {
+
+                defaults().pad(5f)
                 background = TextureRegionDrawable(atlas.findRegion(RegionNames.BACKGROUND))
                 setFillParent(true)
-                align(Align.center)
-
-                verticalGroup {
+                align(Align.top)
+                background("list")
+                verticalGroup() {
                     space(25f)
-                    button(style = "small") {
-                        label("Easy") {
-                        }
+                    label("Highscore")
+                    pad(50f)
+                    label(GameManager.getHighscore().toString())
+                    label("Name")
+                    pad(50f)
+                    label(GameManager.getName())
+                    button(style="small") {
                         onEnter { color=Color.YELLOW }
                         onExit{ color=Color.WHITE}
                         onClick {
-                            GameManager.setDifficulty("easy")
-                            game.setScreen<GameScreen>()
+                            game.setScreen<MenuScreen>()
+                        }
+                        label("Main menu"){
 
-                        }
-                    }
-
-                    button(style = "small") {
-                        label("Medium") {
-                        }
-                        onEnter { color=Color.YELLOW }
-                        onExit{ color=Color.WHITE}
-                        onClick {
-                            GameManager.setDifficulty("medium")
-                            game.setScreen<GameScreen>()
-                        }
-                    }
-
-                    button(style = "small") {
-                        label("Hard") {
-                        }
-                        onEnter { color=Color.YELLOW }
-                        onExit{ color=Color.WHITE}
-                        onClick {
-                            GameManager.setDifficulty("hard")
-                            game.setScreen<GameScreen>()
                         }
                     }
                 }
             }
         }
-
         Gdx.input.inputProcessor = stage
     }
-
 
     override fun render(delta: Float) {
         stage.act()
         stage.draw()
     }
 
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height, true)
-    }
-
-
     override fun hide() {
         super.hide()
         stage.clear()
+    }
+
+    override fun resize(width: Int, height: Int) {
+        //super.resize(width, height)
+        viewport.update(width, height, true)
     }
 
     override fun dispose() {

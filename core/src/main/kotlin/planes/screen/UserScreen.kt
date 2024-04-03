@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Cell.defaults
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Align
@@ -24,11 +25,12 @@ import ktx.scene2d.actors
 import ktx.scene2d.button
 import ktx.scene2d.label
 import ktx.scene2d.table
+import ktx.scene2d.textField
 import ktx.scene2d.verticalGroup
 import ktx.style.label
 import planes.Planes
 
-class OptionsScreen(game : Planes, atlas : TextureAtlas) : AbstractPlanesScreen(game, atlas) {
+class UserScreen(game : Planes, atlas: TextureAtlas) : AbstractPlanesScreen(game, atlas)  {
 
     private lateinit var stage : Stage
     private val mySkin : Skin = Skin(Gdx.files.internal("skin/glassy-ui.json"))
@@ -40,12 +42,15 @@ class OptionsScreen(game : Planes, atlas : TextureAtlas) : AbstractPlanesScreen(
 
     private val fontA : BitmapFont = generator.generateFont {
         size = 20
-        color = Color.WHITE
+        color = Color.BLUE
     }
+
+
 
     override fun show() {
         stage = Stage(viewport)
         Scene2DSkin.defaultSkin = mySkin
+        defaults().pad(5f)
 
         mySkin.label {
             font = fontA
@@ -56,63 +61,48 @@ class OptionsScreen(game : Planes, atlas : TextureAtlas) : AbstractPlanesScreen(
                 background = TextureRegionDrawable(atlas.findRegion(RegionNames.BACKGROUND))
                 setFillParent(true)
                 align(Align.center)
-
+                background("list")
                 verticalGroup {
                     space(25f)
-                    button(style = "small") {
-                        label("Easy") {
-                        }
-                        onEnter { color=Color.YELLOW }
-                        onExit{ color=Color.WHITE}
-                        onClick {
-                            GameManager.setDifficulty("easy")
-                            game.setScreen<GameScreen>()
-
-                        }
+                    label("Player name : ")
+                    val textField = textField(){
                     }
-
                     button(style = "small") {
-                        label("Medium") {
-                        }
+                        label("Continue")
                         onEnter { color=Color.YELLOW }
                         onExit{ color=Color.WHITE}
                         onClick {
-                            GameManager.setDifficulty("medium")
-                            game.setScreen<GameScreen>()
-                        }
-                    }
+                            GameManager.setName(textField.text)
+                            /*
+                            if(game.containsScreen<UserScreen>()){
+                                game.removeScreen<UserScreen>()
+                                dispose()
+                            }
 
-                    button(style = "small") {
-                        label("Hard") {
-                        }
-                        onEnter { color=Color.YELLOW }
-                        onExit{ color=Color.WHITE}
-                        onClick {
-                            GameManager.setDifficulty("hard")
-                            game.setScreen<GameScreen>()
+                             */
+                            game.setScreen<MenuScreen>()
                         }
                     }
                 }
             }
+            Gdx.input.inputProcessor = stage
         }
-
-        Gdx.input.inputProcessor = stage
     }
-
 
     override fun render(delta: Float) {
-        stage.act()
-        stage.draw()
+        stage.run {
+            act()
+            draw()
+        }
     }
-
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height, true)
-    }
-
 
     override fun hide() {
         super.hide()
         stage.clear()
+    }
+
+    override fun resize(width: Int, height: Int) {
+        viewport.update(width, height, true)
     }
 
     override fun dispose() {
